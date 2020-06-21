@@ -7,7 +7,7 @@ const classNames = require("classnames");
 
 const Spec: React.FC = () => {
   const { data, commoditySpecs } = useSelector((state: RootState) => state.spec);
-  // 已选择的，就三个选项
+  // 已选择的规格，长度为规格列表的长度
   const [specsS, setSpecsS] = useState(Array(commoditySpecs.length).fill(""));
 
   // 创建一个规格矩阵
@@ -16,9 +16,9 @@ const Spec: React.FC = () => {
   const optionSpecs = specAdjoinMatrix.querySpecsOptions(specsS);
 
   const handleClick = function (bool: boolean, text: string, index: number) {
-    // 可选项没有的并且选中不同的
+    // 排除可选规格里面没有的规格
     if (specsS[index] !== text && !bool) return;
-    // 选择中相同的，可能可选项有的，可选项没有的
+    // 根据text判断是否已经被选中了
     specsS[index] = specsS[index] === text ? "" : text;
     setSpecsS(specsS.slice());
   };
@@ -30,8 +30,8 @@ const Spec: React.FC = () => {
           <p className="title">{title}</p>
           <div className="specBox">
             {list.map((value, i) => {
-              const isOption = optionSpecs.includes(value);
-              const isActive = specsS.includes(value);
+              const isOption = optionSpecs.includes(value); // 当前规格是否可选
+              const isActive = specsS.includes(value); // 当前规格是否被选
               return (
                 <span
                   key={i}
@@ -40,7 +40,7 @@ const Spec: React.FC = () => {
                     specAction: isActive,
                     specDisabled: !isOption,
                   })}
-                  onClick={() => handleClick(optionSpecs.indexOf(value) > -1, value, index)}
+                  onClick={() => handleClick(isOption, value, index)}
                 >
                   {value}
                 </span>
