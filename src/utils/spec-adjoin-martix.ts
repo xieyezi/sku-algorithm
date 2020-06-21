@@ -39,13 +39,13 @@ export default class SpecAdjoinMatrix extends AdjoinMatrix {
     });
   }
   /*
+   * @params
    * 传入顶点数组，查询出可选规格
-   * @param params
    */
   getSpecscOptions(params: AdjoinType) {
     let specOptionCanchoose: AdjoinType = [];
     if (params.some(Boolean)) {
-      // 过滤一下选项
+      // 获取可选项（交集）
       specOptionCanchoose = this.getUnions(params.filter(Boolean));
     } else {
       // 所有可选项
@@ -54,9 +54,9 @@ export default class SpecAdjoinMatrix extends AdjoinMatrix {
     return specOptionCanchoose;
   }
 
-  /**
-   *
-   * @param {*} params [key, key]
+  /*
+   * @params
+   * 填写邻接矩阵的值
    */
   fillInSpec(params: AdjoinType) {
     params.forEach((param) => {
