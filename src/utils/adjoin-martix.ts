@@ -13,7 +13,7 @@ export default class AdjoinMatrix {
   }
   // 初始化数组
   init() {
-    this.adjoinArray = Array.from({ length: this.quantity * this.quantity });
+    this.adjoinArray = Array(this.quantity * this.quantity).fill(0);
   }
 
   /*

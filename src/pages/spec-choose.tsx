@@ -6,14 +6,14 @@ import "./spec.css";
 const classNames = require("classnames");
 
 const Spec: React.FC = () => {
-  const { data, commoditySpecs } = useSelector((state: RootState) => state.spec);
+  const { specList, specCombinationList } = useSelector((state: RootState) => state.spec);
   // 已选择的规格，长度为规格列表的长度
-  const [specsS, setSpecsS] = useState(Array(commoditySpecs.length).fill(""));
+  const [specsS, setSpecsS] = useState(Array(specList.length).fill(""));
 
   // 创建一个规格矩阵
-  const specAdjoinMatrix = useMemo(() => new SpecAdjoinMatrix(commoditySpecs, data), [commoditySpecs, data]);
+  const specAdjoinMatrix = useMemo(() => new SpecAdjoinMatrix(specList, specCombinationList), [specList, specCombinationList]);
   // 获得可选项表
-  const optionSpecs = specAdjoinMatrix.querySpecsOptions(specsS);
+  const optionSpecs = specAdjoinMatrix.getSpecscOptions(specsS);
 
   const handleClick = function (bool: boolean, text: string, index: number) {
     // 排除可选规格里面没有的规格
@@ -25,7 +25,7 @@ const Spec: React.FC = () => {
 
   return (
     <div className="container">
-      {commoditySpecs.map(({ title, list }, index) => (
+      {specList.map(({ title, list }, index) => (
         <div key={index}>
           <p className="title">{title}</p>
           <div className="specBox">

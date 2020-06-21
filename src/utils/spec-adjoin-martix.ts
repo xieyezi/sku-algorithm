@@ -3,46 +3,46 @@ import { AdjoinType } from "./adjoin-martix";
 import { SpecCategoryType, CommoditySpecsType } from "../redux/reducer/spec-reducer";
 
 export default class SpecAdjoinMatrix extends AdjoinMatrix {
-  commoditySpecs: Array<CommoditySpecsType>;
-  data: Array<SpecCategoryType>;
+  specList: Array<CommoditySpecsType>;
+  specCombinationList: Array<SpecCategoryType>;
 
-  constructor(commoditySpecs: Array<CommoditySpecsType>, data: Array<SpecCategoryType>) {
-    super(commoditySpecs.reduce((total: AdjoinType, current) => [...total, ...current.list], []));
-    this.commoditySpecs = commoditySpecs;
-    this.data = data;
+  constructor(specList: Array<CommoditySpecsType>, specCombinationList: Array<SpecCategoryType>) {
+    super(specList.reduce((total: AdjoinType, current) => [...total, ...current.list], []));
+    this.specList = specList;
+    this.specCombinationList = specCombinationList;
     // 根据可选规格列表矩阵创建
-    this.initCommodity();
+    this.initSpec();
     // 同级顶点创建
-    this.initSimilar();
+    this.initSameLevel();
   }
 
   /**
-   * 对数据结构不同层次的解析 （item.specs）
+   * 根据可选规格组合填写邻接矩阵的值
    */
-  initCommodity() {
-    this.data.forEach((item) => {
-      this.applyCommodity(item.specs);
+  initSpec() {
+    this.specCombinationList.forEach((item) => {
+      this.fillInSpec(item.specs);
     });
   }
-
-  initSimilar() {
-    // 获得所有可选项 (所有连接上了的点)
+  // 填写同级点
+  initSameLevel() {
+    // 获得初始所有可选项
     const specsOption = this.getCollection(this.vertex);
-    this.commoditySpecs.forEach((item) => {
+    this.specList.forEach((item) => {
       const params: AdjoinType = [];
       // 获取同级别顶点
       item.list.forEach((value) => {
         if (specsOption.includes(value)) params.push(value);
       });
       // 同级点位创建
-      this.applyCommodity(params);
+      this.fillInSpec(params);
     });
   }
   /*
    * 传入顶点数组，查询出可选规格
    * @param params
    */
-  querySpecsOptions(params: AdjoinType) {
+  getSpecscOptions(params: AdjoinType) {
     let specOptionCanchoose: AdjoinType = [];
     if (params.some(Boolean)) {
       // 过滤一下选项
@@ -58,7 +58,7 @@ export default class SpecAdjoinMatrix extends AdjoinMatrix {
    *
    * @param {*} params [key, key]
    */
-  applyCommodity(params: AdjoinType) {
+  fillInSpec(params: AdjoinType) {
     params.forEach((param) => {
       this.setAdjoinVertexs(param, params);
     });
