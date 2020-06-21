@@ -43,7 +43,7 @@ export default class SpecAdjoinMatrix extends AdjoinMatrix {
    * @param params
    */
   querySpecsOptions(params: AdjoinType) {
-    let specOptionCanchoose: any = [];
+    let specOptionCanchoose: AdjoinType = [];
     if (params.some(Boolean)) {
       // 过滤一下选项
       specOptionCanchoose = this.getUnions(params.filter(Boolean));

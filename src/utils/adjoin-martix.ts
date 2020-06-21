@@ -67,7 +67,11 @@ export default class AdjoinMatrix {
    */
   getCollection(params: AdjoinType) {
     const paramsColSum = this.getColSum(params);
-    return paramsColSum.map((item, index) => item && this.vertex[index]).filter(Boolean);
+    let collections: AdjoinType = [];
+    paramsColSum.forEach((item, index) => {
+      if (item && this.vertex[index]) collections.push(this.vertex[index]);
+    });
+    return collections;
   }
 
   /*
@@ -76,6 +80,10 @@ export default class AdjoinMatrix {
    */
   getUnions(params: AdjoinType) {
     const paramsColSum = this.getColSum(params);
-    return paramsColSum.map((item, index) => item >= params.length && this.vertex[index]).filter(Boolean);
+    let unions: AdjoinType = [];
+    paramsColSum.forEach((item, index) => {
+      if (item >= params.length && this.vertex[index]) unions.push(this.vertex[index]);
+    });
+    return unions;
   }
 }
