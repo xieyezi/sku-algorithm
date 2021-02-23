@@ -3,7 +3,7 @@ export type AdjoinType = Array<string>;
 export default class AdjoinMatrix {
   vertex: AdjoinType; // 顶点数组
   quantity: number; // 矩阵长度
-  adjoinArray: Array<number>; // 矩阵数组
+  adjoinArray: Array<any>; // 矩阵数组
 
   constructor(vertx: AdjoinType) {
     this.vertex = vertx;
@@ -19,13 +19,20 @@ export default class AdjoinMatrix {
   /*
    * @param id string
    * @param sides Array<string>
-   *  传入一个顶点，和当前顶点可达的顶点数组，将对应位置置为1
+   *  传入一个顶点，和当前顶点可达的顶点数组，将对应位置设置权值
    */
-  setAdjoinVertexs(id: string, sides: AdjoinType) {
+  setAdjoinVertexs(id: string, sides: AdjoinType, weight: number) {
     const pIndex = this.vertex.indexOf(id);
     sides.forEach((item) => {
       const index = this.vertex.indexOf(item);
-      this.adjoinArray[pIndex * this.quantity + index] = 1;
+      const cur = this.adjoinArray[pIndex * this.quantity + index];
+      if (typeof cur !== 'number') { // specList.length > 3时，存在单边多权的情况
+        this.adjoinArray[pIndex * this.quantity + index].push(weight);
+      } else if (cur > 1) {
+        this.adjoinArray[pIndex * this.quantity + index] = [cur, weight];
+      } else {
+        this.adjoinArray[pIndex * this.quantity + index] = weight;
+      }
     });
   }
 
@@ -35,7 +42,7 @@ export default class AdjoinMatrix {
    */
   getVertexCol(id: string) {
     const index = this.vertex.indexOf(id);
-    const col: Array<number> = [];
+    const col: Array<any> = [];
     this.vertex.forEach((item, pIndex) => {
       col.push(this.adjoinArray[index + this.quantity * pIndex]);
     });
@@ -43,34 +50,17 @@ export default class AdjoinMatrix {
   }
 
   /*
-   * @param params Array<string>
-   * 传入一个顶点数组，求出该数组所有顶点的列的合
-   */
-  getColSum(params: AdjoinType) {
-    const paramsVertex = params.map((id) => this.getVertexCol(id));
-    const paramsVertexSum: Array<number> = [];
-    this.vertex.forEach((item, index) => {
-      const rowtotal = paramsVertex
-        .map((value) => value[index])
-        .reduce((total, current) => {
-          total += current || 0;
-          return total;
-        }, 0);
-      paramsVertexSum.push(rowtotal);
-    });
-    return paramsVertexSum;
-  }
-
-  /*
    *  @param params Array<string>
    * 传入一个顶点数组，求出并集
    */
   getCollection(params: AdjoinType) {
-    const paramsColSum = this.getColSum(params);
+    const paramsVertex = params.map((id) => this.getVertexCol(id));
     let collections: AdjoinType = [];
-    paramsColSum.forEach((item, index) => {
-      if (item && this.vertex[index]) collections.push(this.vertex[index]);
-    });
+    paramsVertex.forEach((col, index) => {
+      if (col.some(item => item !== 0)) {
+        collections.push(params[index])
+      }
+    })
     return collections;
   }
 
@@ -79,11 +69,41 @@ export default class AdjoinMatrix {
    * 传入一个顶点数组，求出交集
    */
   getUnions(params: AdjoinType) {
-    const paramsColSum = this.getColSum(params);
+    const paramsVertex = params.map((id) => this.getVertexCol(id));
     let unions: AdjoinType = [];
-    paramsColSum.forEach((item, index) => {
-      if (item >= params.length && this.vertex[index]) unions.push(this.vertex[index]);
-    });
+    this.vertex.forEach((type, index) => {
+      const row = paramsVertex.map(col => col[index]).filter(t => t !== 1)
+      if (this.isItemEqual(row)) {
+        unions.push(type)
+      }
+    })
     return unions;
+  }
+
+  /*
+   *  @param params
+   * 传入一个交集行，判断内部是否互相相等
+   */
+  isItemEqual(params: Array<any>) {
+    let weight: number = -1;
+
+    // 找出权值
+    if (params.length) {
+      params.some(t => {
+        if (typeof t === 'number' && t > 0) weight = t
+        return typeof t === 'number'
+      })
+      if (weight === -1) {
+        weight = params[0][0]
+      }
+    }
+
+    return params.every(t => {
+      if (typeof t === 'number') {
+        return t === weight
+      } else {
+        return t.includes(weight)
+      }
+    })
   }
 }
