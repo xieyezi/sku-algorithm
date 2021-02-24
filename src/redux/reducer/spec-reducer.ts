@@ -24,9 +24,11 @@ const initialState: SpecStateType = {
   ],
   specCombinationList: [
     {id: "1", specs: ["G", "1寸", "白色", "正方"]},
-    {id: "2", specs: ["G", "1寸", "粉色", "圆"]},
-    {id: "3", specs: ["KG", "3寸", "白色", "圆"]},
-    {id: "4", specs: ["KG", "2寸", "粉色", "正方"]},
+    {id: "2", specs: ["G", "1寸", "白色", "圆"]},
+    {id: "3", specs: ["G", "1寸", "粉色", "圆"]},
+    {id: "4", specs: ["G", "1寸", "粉色", "正方"]},
+    {id: "5", specs: ["KG", "3寸", "白色", "圆"]},
+    {id: "6", specs: ["KG", "2寸", "粉色", "正方"]},
   ],
   // specList: [
   //   {title: "颜色", list: ["白色", "粉色"]},

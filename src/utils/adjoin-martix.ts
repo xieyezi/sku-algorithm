@@ -88,13 +88,13 @@ export default class AdjoinMatrix {
     let weight: number = -1;
 
     // 找出权值
-    if (params.length) {
+    if (params.length && params[0] !== 0) {
       params.some(t => {
         if (typeof t === 'number' && t > 0) weight = t
         return typeof t === 'number'
       })
-      if (weight === -1) {
-        weight = params[0][0]
+      if (weight === -1) { // 都是多权边数组的情况
+        return this.isArrayUnions(params)
       }
     }
 
@@ -104,6 +104,17 @@ export default class AdjoinMatrix {
       } else {
         return t.includes(weight)
       }
+    })
+  }
+
+  /*
+   *  @param params
+   * 传入多个数组，判断是否有交集
+   */
+  isArrayUnions(params: Array<Array<number>>) {
+    if (!params.length) return false;
+    return params[0].some(t => {
+      return params.every(_t => _t.includes(t))
     })
   }
 }
