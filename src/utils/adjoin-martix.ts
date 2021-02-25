@@ -85,12 +85,14 @@ export default class AdjoinMatrix {
    * 传入一个交集行，判断内部是否互相相等
    */
   isItemEqual(params: Array<any>) {
+    if (params.includes(0)) return false;
+
     let weight: number = -1;
 
     // 找出权值
-    if (params.length && params[0] !== 0) {
+    if (params.length) {
       params.some(t => {
-        if (typeof t === 'number' && t > 0) weight = t
+        if (typeof t === 'number') weight = t
         return typeof t === 'number'
       })
       if (weight === -1) { // 都是多权边数组的情况
