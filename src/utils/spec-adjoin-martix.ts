@@ -20,8 +20,8 @@ export default class SpecAdjoinMatrix extends AdjoinMatrix {
    * 根据可选规格组合填写邻接矩阵的值
    */
   initSpec() {
-    this.specCombinationList.forEach((item) => {
-      this.fillInSpec(item.specs);
+    this.specCombinationList.forEach((item, index) => {
+      this.fillInSpec(item.specs, index + 2); // 0用于互不相连，1用于同级，权级就从2开始
     });
   }
   // 填写同级点
@@ -35,7 +35,7 @@ export default class SpecAdjoinMatrix extends AdjoinMatrix {
         if (specsOption.includes(value)) params.push(value);
       });
       // 同级点位创建
-      this.fillInSpec(params);
+      this.fillInSpec(params, 1);
     });
   }
   /*
@@ -58,9 +58,9 @@ export default class SpecAdjoinMatrix extends AdjoinMatrix {
    * @params
    * 填写邻接矩阵的值
    */
-  fillInSpec(params: AdjoinType) {
+  fillInSpec(params: AdjoinType, weight: number) {
     params.forEach((param) => {
-      this.setAdjoinVertexs(param, params);
+      this.setAdjoinVertexs(param, params, weight);
     });
   }
 }
